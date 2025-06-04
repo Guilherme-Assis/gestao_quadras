@@ -9,7 +9,13 @@ import itensRoutes from './routes/itens.js'
 
 dotenv.config()
 const app = express()
-app.use(cors({ origin: '*' }));
+app.options('*', cors());
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json())
 
 app.use('/quadras', quadrasRoutes)
