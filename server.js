@@ -5,6 +5,7 @@ import quadrasRoutes from './routes/quadras.js'
 import produtosRoutes from './routes/produtos.js'
 import comandasRoutes from './routes/comandas.js'
 import itensRoutes from './routes/itens.js'
+import usuariosRoutes from './routes/usuarios.js';
 
 
 dotenv.config()
@@ -21,6 +22,7 @@ app.use('/quadras', quadrasRoutes)
 app.use('/produtos', produtosRoutes)
 app.use('/comandas', comandasRoutes)
 app.use('/itens', itensRoutes)
+app.use('/usuarios', usuariosRoutes);
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => console.log(`🚀 Servidor rodando na porta ${PORT}`))
