@@ -17,16 +17,22 @@ export const obterComanda = async (req, res) => {
 
 // POST /comandas
 export const criarComanda = async (req, res) => {
-    const { nome, quadra_id, cliente_nome } = req.body
+    const { nome, quadra_id, cliente_nome, valor_horario } = req.body;
 
     const { data, error } = await supabase
         .from('comandas')
-        .insert([{ nome, quadra_id, cliente_nome, status: 'aberta' }])
+        .insert([{
+            nome,
+            quadra_id,
+            cliente_nome,
+            status: 'aberta',
+            valor_horario: parseFloat(valor_horario) || 0
+        }])
         .select()
-        .single()
+        .single();
 
-    if (error) return res.status(400).json({ error: error.message })
-    res.status(201).json(data)
+    if (error) return res.status(400).json({ error: error.message });
+    res.status(201).json(data);
 }
 
 // PUT /comandas/:id/fechar
