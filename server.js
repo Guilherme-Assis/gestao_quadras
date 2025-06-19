@@ -6,7 +6,7 @@ import produtosRoutes from './routes/produtos.js'
 import comandasRoutes from './routes/comandas.js'
 import itensRoutes from './routes/itens.js'
 import usuariosRoutes from './routes/usuarios.js';
-
+import relatoriosRoutes from './routes/relatorios.js';
 
 dotenv.config()
 const app = express()
@@ -23,6 +23,7 @@ app.use('/produtos', produtosRoutes)
 app.use('/comandas', comandasRoutes)
 app.use('/itens', itensRoutes)
 app.use('/usuarios', usuariosRoutes);
+app.use('/relatorios', relatoriosRoutes);
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => console.log(`🚀 Servidor rodando na porta ${PORT}`))
