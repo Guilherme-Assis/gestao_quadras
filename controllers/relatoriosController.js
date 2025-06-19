@@ -7,7 +7,7 @@ import {
     usoPorHora,
     clientesQueMaisCompram,
     indicadoresPerformance
-} from '../services/financeReports.js';
+} from '../services/financeReport.js';
 
 export const relatorioFaturamentoDiario = async (req, res) => {
     try {
