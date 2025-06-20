@@ -68,12 +68,12 @@ export async function ticketMedio() {
 export async function usoPorHora() {
     const { data, error } = await supabase
         .from('comandas')
-        .select('created_at');
+        .select('data_abertura');
 
     if (error) throw error;
 
-    const porHora = data.reduce((acc, { created_at }) => {
-        const hora = new Date(created_at).getHours();
+    const porHora = data.reduce((acc, { data_abertura }) => {
+        const hora = new Date(data_abertura).getHours();
         acc[hora] = (acc[hora] || 0) + 1;
         return acc;
     }, {});
@@ -101,14 +101,14 @@ export async function clientesQueMaisCompram() {
 export async function indicadoresPerformance() {
     const { data: comandas, error } = await supabase
         .from('comandas')
-        .select('total, created_at')
+        .select('total, data_abertura')
         .eq('status', 'fechada');
 
     if (error) throw error;
 
     const hoje = new Date().toISOString().split('T')[0];
     const hojeTotal = comandas
-        .filter(c => c.created_at.startsWith(hoje))
+        .filter(c => c.data_abertura.startsWith(hoje))
         .reduce((acc, c) => acc + c.total, 0);
 
     const geralTotal = comandas.reduce((acc, c) => acc + c.total, 0);
