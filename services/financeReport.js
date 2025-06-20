@@ -34,19 +34,33 @@ export async function faturamentoPorQuadra() {
 
 // 4. Produtos mais vendidos
 export async function produtosMaisVendidos() {
-    const { data, error } = await supabase
-        .from('itens')
-        .select('produto_id, produtos(nome), quantidade');
+    // 1. Buscar todos os itens
+    const { data: itens, error: errorItens } = await supabase
+        .from('itens_comanda')
+        .select('produto_id, quantidade');
 
-    if (error) throw error;
+    if (errorItens) throw errorItens;
 
-    const agrupado = data.reduce((acc, item) => {
-        const nome = item.produtos.nome;
-        acc[nome] = (acc[nome] || 0) + item.quantidade;
-        return acc;
-    }, {});
+    // 2. Buscar todos os produtos
+    const { data: produtos, error: errorProdutos } = await supabase
+        .from('produtos')
+        .select('id, nome');
 
-    return Object.entries(agrupado).map(([nome, qtd]) => ({ nome, quantidade: qtd }));
+    if (errorProdutos) throw errorProdutos;
+
+    // 3. Agrupar os produtos com base nos nomes
+    const agrupado = {};
+
+    itens.forEach(item => {
+        const produto = produtos.find(p => p.id === item.produto_id);
+        const nome = produto?.nome || 'Desconhecido';
+        agrupado[nome] = (agrupado[nome] || 0) + item.quantidade;
+    });
+
+    return Object.entries(agrupado).map(([nome, quantidade]) => ({
+        nome,
+        quantidade
+    }));
 }
 
 // 5. Ticket médio (total / qtd comandas)
