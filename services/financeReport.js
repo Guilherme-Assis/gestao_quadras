@@ -1,25 +1,38 @@
 import { supabase } from './supabaseClient.js';
 
+// Utilitário para datas padrão (últimos 30 dias)
+function getRange(dataInicio, dataFim) {
+    const fim = dataFim || new Date().toISOString().split('T')[0];
+    const inicio = dataInicio || new Date(Date.now() - 29 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    return { inicio, fim };
+}
+
 // 1. Faturamento diário
-export async function faturamentoDiario() {
-    const { data, error } = await supabase.rpc('faturamento_diario');
+export async function faturamentoDiario(dataInicio, dataFim) {
+    const { inicio, fim } = getRange(dataInicio, dataFim);
+    const { data, error } = await supabase.rpc('faturamento_diario', { data_inicio: inicio, data_fim: fim });
     if (error) throw error;
     return data;
 }
 
 // 2. Faturamento mensal
-export async function faturamentoMensal() {
-    const { data, error } = await supabase.rpc('faturamento_mensal');
+export async function faturamentoMensal(dataInicio, dataFim) {
+    const { inicio, fim } = getRange(dataInicio, dataFim);
+    const { data, error } = await supabase.rpc('faturamento_mensal', { data_inicio: inicio, data_fim: fim });
     if (error) throw error;
     return data;
 }
 
 // 3. Faturamento por quadra
-export async function faturamentoPorQuadra() {
+export async function faturamentoPorQuadra(dataInicio, dataFim) {
+    const { inicio, fim } = getRange(dataInicio, dataFim);
+
     const { data, error } = await supabase
         .from('comandas')
-        .select('quadras!inner(nome), total')
-        .eq('status', 'fechada');
+        .select('quadras!inner(nome), total, data_abertura')
+        .eq('status', 'fechada')
+        .gte('data_abertura', inicio)
+        .lte('data_abertura', fim);
 
     if (error) throw error;
 
@@ -33,22 +46,23 @@ export async function faturamentoPorQuadra() {
 }
 
 // 4. Produtos mais vendidos
-export async function produtosMaisVendidos() {
-    // 1. Buscar todos os itens
+export async function produtosMaisVendidos(dataInicio, dataFim) {
+    const { inicio, fim } = getRange(dataInicio, dataFim);
+
     const { data: itens, error: errorItens } = await supabase
         .from('itens_comanda')
-        .select('produto_id, quantidade');
+        .select('produto_id, quantidade, comandas(data_abertura)')
+        .gte('comandas.data_abertura', inicio)
+        .lte('comandas.data_abertura', fim);
 
     if (errorItens) throw errorItens;
 
-    // 2. Buscar todos os produtos
     const { data: produtos, error: errorProdutos } = await supabase
         .from('produtos')
         .select('id, nome');
 
     if (errorProdutos) throw errorProdutos;
 
-    // 3. Agrupar os produtos com base nos nomes
     const agrupado = {};
 
     itens.forEach(item => {
@@ -63,12 +77,16 @@ export async function produtosMaisVendidos() {
     }));
 }
 
-// 5. Ticket médio (total / qtd comandas)
-export async function ticketMedio() {
+// 5. Ticket médio
+export async function ticketMedio(dataInicio, dataFim) {
+    const { inicio, fim } = getRange(dataInicio, dataFim);
+
     const { data: comandas, error } = await supabase
         .from('comandas')
-        .select('total')
-        .eq('status', 'fechada');
+        .select('total, data_abertura')
+        .eq('status', 'fechada')
+        .gte('data_abertura', inicio)
+        .lte('data_abertura', fim);
 
     if (error) throw error;
 
@@ -79,10 +97,14 @@ export async function ticketMedio() {
 }
 
 // 6. Uso por hora
-export async function usoPorHora() {
+export async function usoPorHora(dataInicio, dataFim) {
+    const { inicio, fim } = getRange(dataInicio, dataFim);
+
     const { data, error } = await supabase
         .from('comandas')
-        .select('data_abertura');
+        .select('data_abertura')
+        .gte('data_abertura', inicio)
+        .lte('data_abertura', fim);
 
     if (error) throw error;
 
@@ -96,10 +118,15 @@ export async function usoPorHora() {
 }
 
 // 7. Clientes que mais compram
-export async function clientesQueMaisCompram() {
+export async function clientesQueMaisCompram(dataInicio, dataFim) {
+    const { inicio, fim } = getRange(dataInicio, dataFim);
+
     const { data, error } = await supabase
         .from('comandas')
-        .select('cliente_nome, total');
+        .select('cliente_nome, total, data_abertura')
+        .eq('status', 'fechada')
+        .gte('data_abertura', inicio)
+        .lte('data_abertura', fim);
 
     if (error) throw error;
 
@@ -112,15 +139,19 @@ export async function clientesQueMaisCompram() {
 }
 
 // 8. Indicadores de performance
-export async function indicadoresPerformance() {
+export async function indicadoresPerformance(dataInicio, dataFim) {
+    const { inicio, fim } = getRange(dataInicio, dataFim);
+    const hoje = new Date().toISOString().split('T')[0];
+
     const { data: comandas, error } = await supabase
         .from('comandas')
         .select('total, data_abertura')
-        .eq('status', 'fechada');
+        .eq('status', 'fechada')
+        .gte('data_abertura', inicio)
+        .lte('data_abertura', fim);
 
     if (error) throw error;
 
-    const hoje = new Date().toISOString().split('T')[0];
     const hojeTotal = comandas
         .filter(c => c.data_abertura.startsWith(hoje))
         .reduce((acc, c) => acc + c.total, 0);
