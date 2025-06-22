@@ -7,10 +7,9 @@ function getRange(dataInicio, dataFim) {
     return { inicio, fim };
 }
 
-// 1. Faturamento diário
-export async function faturamentoDiario(dataInicio, dataFim) {
-    const { inicio, fim } = getRange(dataInicio, dataFim);
-    const { data, error } = await supabase.rpc('faturamento_diario', { data_inicio: inicio, data_fim: fim });
+// 1. Faturamento diário (últimos 7 dias fixos via RPC sem parâmetros)
+export async function faturamentoDiario() {
+    const { data, error } = await supabase.rpc('faturamento_diario');
     if (error) throw error;
     return data;
 }
@@ -71,10 +70,7 @@ export async function produtosMaisVendidos(dataInicio, dataFim) {
         agrupado[nome] = (agrupado[nome] || 0) + item.quantidade;
     });
 
-    return Object.entries(agrupado).map(([nome, quantidade]) => ({
-        nome,
-        quantidade
-    }));
+    return Object.entries(agrupado).map(([nome, quantidade]) => ({ nome, quantidade }));
 }
 
 // 5. Ticket médio
