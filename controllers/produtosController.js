@@ -38,10 +38,10 @@ export const criarProduto = async (req, res) => {
 
 export const atualizarProduto = async (req, res) => {
     const {id} = req.params
-    const {nome, preco_custo, preco_venda, estoque, alerta_enviado} = req.body
+    const {nome, preco_custo, preco_venda, estoque, alerta_enviado, imagem} = req.body
     const {data, error} = await supabase
         .from('produtos')
-        .update({nome, preco_custo, preco_venda, estoque, alerta_enviado})
+        .update({nome, preco_custo, preco_venda, estoque, alerta_enviado, imagem})
         .eq('id', id)
         .select()
         .single()
