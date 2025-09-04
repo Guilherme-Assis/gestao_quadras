@@ -59,6 +59,23 @@ export const adicionarItem = async (req, res) => {
     res.status(201).json(novoItem)
 }
 
+// PUT /itens/:id/pagar
+    export const marcarItemComoPago = async (req, res) => {
+    const { id } = req.params
+
+    const { data, error } = await supabase
+        .from('itens_comanda')
+        .update({
+            pago: true
+        })
+        .eq('id', id)
+        .select()
+        .single()
+
+    if (error) return res.status(400).json({ error: error.message })
+    return res.status(200).json(data)
+}
+
 
 // PUT /itens/:id
 export const atualizarItem = async (req, res) => {
