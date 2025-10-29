@@ -195,7 +195,7 @@ export const listarItensDaComanda = async (req, res) => {
 
     const { data, error } = await supabase
         .from('itens_comanda')
-        .select('*, produto:produto_id(nome, preco_custo, preco_venda)')
+        .select('*, produto:produto_id(nome, preco_custo, preco_venda, estoque)')
         .eq('comanda_id', comanda_id)
 
     if (error) return res.status(500).json({ error: error.message })

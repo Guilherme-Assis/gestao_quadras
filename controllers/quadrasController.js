@@ -22,10 +22,10 @@ export const criarQuadra = async (req, res) => {
 
 export const atualizarQuadra = async (req, res) => {
     const { id } = req.params
-    const { nome, tipo, status } = req.body
+    const { nome, tipo, status, preco_hora } = req.body
     const { data, error } = await supabase
         .from('quadras')
-        .update({ nome, tipo, status })
+        .update({ nome, tipo, status, preco_hora })
         .eq('id', id)
         .select()
     if (error) return res.status(400).json({ error: error.message })

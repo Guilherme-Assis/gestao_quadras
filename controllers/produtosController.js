@@ -17,6 +17,24 @@ export const listarProdutos = async (req, res) => {
     res.status(200).json(data);
 };
 
+export const listarProdutosComEstoque = async (req, res) => {
+    const {search} = req.query;
+
+    const query = supabase
+        .from('produtos')
+        .select('*')
+        .gt('estoque', 0);
+
+    if (search && search.length >= 3) {
+        query.ilike('nome', `%${search}%`);
+     }
+
+    const {data, error} = await query;
+
+     if (error) return res.status(500).json({error: error.message});
+        res.status(200).json(data);
+}
+
 
 export const obterProduto = async (req, res) => {
     const {id} = req.params
@@ -26,10 +44,10 @@ export const obterProduto = async (req, res) => {
 }
 
 export const criarProduto = async (req, res) => {
-    const {nome, preco_custo, preco_venda, estoque} = req.body
+    const {nome, preco_custo, preco_venda, estoque, imagem} = req.body
     const {data, error} = await supabase
         .from('produtos')
-        .insert([{nome, preco_custo, preco_venda, estoque}])
+        .insert([{nome, preco_custo, preco_venda, estoque, imagem}])
         .select()
         .single()
     if (error) return res.status(400).json({error: error.message})
