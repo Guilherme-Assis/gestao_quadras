@@ -9,10 +9,10 @@ import {
 
 const router = express.Router()
 
-router.get('/', listarQuadras)
-router.get('/:id', obterQuadra)
-router.post('/', criarQuadra)
-router.put('/:id', atualizarQuadra)
-router.delete('/:id', deletarQuadra)
+router.get('/quadras', listarQuadras)
+router.get('/quadras/:id', obterQuadra)
+router.post('/quadras', criarQuadra)
+router.put('/quadras/:id', atualizarQuadra)
+router.delete('/quadras/:id', deletarQuadra)
 
 export default router

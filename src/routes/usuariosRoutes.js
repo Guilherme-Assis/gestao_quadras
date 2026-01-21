@@ -7,8 +7,8 @@ import {
 
 const router = express.Router();
 
-router.post('/', criarUsuario);
-router.get('/', listarUsuarios);
-router.get('/cpf/:cpf', buscarUsuarioPorCpf);
+router.post('/usuarios', criarUsuario);
+router.get('/usuarios', listarUsuarios);
+router.get('/usuarios/cpf/:cpf', buscarUsuarioPorCpf);
 
 export default router;

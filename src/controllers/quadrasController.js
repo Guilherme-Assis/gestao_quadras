@@ -17,7 +17,7 @@ export const criarQuadra = async (req, res) => {
     const { nome, tipo, status, preco_hora } = req.body
     const { data, error } = await supabase.from('quadras').insert([{ nome, tipo, status, preco_hora }]).select().single()
     if (error) return res.status(400).json({ error: error.message })
-    res.status(201).json(data[0])
+    res.status(201).json(data)
 }
 
 export const atualizarQuadra = async (req, res) => {

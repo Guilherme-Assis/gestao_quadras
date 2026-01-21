@@ -1,29 +1,14 @@
-import express from 'express'
-import cors from 'cors'
 import dotenv from 'dotenv'
-import quadrasRoutes from './routes/quadras.js'
-import produtosRoutes from './routes/produtos.js'
-import comandasRoutes from './routes/comandas.js'
-import itensRoutes from './routes/itens.js'
-import usuariosRoutes from './routes/usuarios.js';
-import relatoriosRoutes from './routes/relatorios.js';
+import app from "./src/app.js"
+import cors from 'cors'
+
 
 dotenv.config()
-const app = express()
 app.use(cors({
     origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-app.use(express.json())
-
-app.use('/quadras', quadrasRoutes)
-app.use('/produtos', produtosRoutes)
-app.use('/comandas', comandasRoutes)
-app.use('/itens', itensRoutes)
-app.use('/usuarios', usuariosRoutes);
-app.use('/relatorios', relatoriosRoutes);
-
 const PORT = process.env.PORT || 3001
-app.listen(PORT, () => console.log(`🚀 Servidor rodando na porta ${PORT}`))
+app.listen(PORT, () => console.log(`🚀 Servidor rodando em http://localhost:${PORT}`));
