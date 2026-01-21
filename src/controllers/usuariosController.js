@@ -2,11 +2,11 @@ import { supabase } from '../services/supabaseClient.js';
 
 // POST /usuarios
 export const criarUsuario = async (req, res) => {
-    const { nome, cpf, telefone } = req.body;
+    const { nome, cpf, telefone, email, senha, cargo } = req.body;
 
     const { data, error } = await supabase
         .from('usuarios')
-        .insert([{ nome, cpf, telefone }])
+        .insert([{ nome, cpf, telefone, email, senha, cargo }])
         .select()
         .single();
 
